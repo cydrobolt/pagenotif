@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+import yaml, sys, requests
+
+def contact(items_list):
+    pass
+
+def driver(config):
+    found_items = []
+    for terms, urls in config.items():
+        keywords = terms.split(',')
+        for url in urls:
+            page_text = requests.get(url).text
+            for term in keywords:
+                if term in page_text:
+                    found_items.append(
+                        (term, url)
+                    )
+
+    items_found = len(found_items)
+    return (items_found, found_items)
+
+def main(config_file_path):
+    with open(config_file_path, 'r') as stream:
+        config = yaml.load(stream)
+    items = driver(config)
+    items_num = items[0]
+    items_list = items[1]
+
+    if items_num > 0:
+        contact(items_list)
+
+if __name__ == '__main__':
+    config_file_path = sys.argv[1]
+    main(config_file_path)
